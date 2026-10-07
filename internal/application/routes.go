@@ -3,6 +3,7 @@ package application
 import (
 	"net/http"
 
+	"github.com/Ficserbiyy/shortygo/internal/handler"
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 )
@@ -23,7 +24,7 @@ func (a *App) loadRoutes() {
 }
 
 func (a *App) loadShortyRoutes(e *echo.Group) {
-	e.POST("/", func(c *echo.Context) error {
-		return c.NoContent(http.StatusNotImplemented)
-	})
+	repo := handler.ShortyRepo{}
+
+	e.POST("/", repo.Create())
 }
