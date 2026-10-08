@@ -1,9 +1,15 @@
 package main
 
-import "github.com/Ficserbiyy/shortygo/internal/application"
+import (
+	"context"
+
+	"github.com/Ficserbiyy/shortygo/internal/application"
+)
 
 func main() {
-	app := application.NewApp()
+	ctx := context.Background()
 
-	app.Start()
+	app := application.NewApp(ctx)
+
+	app.Start(ctx)
 }

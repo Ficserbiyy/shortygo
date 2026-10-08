@@ -24,7 +24,9 @@ func (a *App) loadRoutes() {
 }
 
 func (a *App) loadShortyRoutes(e *echo.Group) {
-	repo := handler.ShortyRepo{}
+	repo := handler.ShortyRepo{
+		DB: a.db,
+	}
 
 	e.POST("/", repo.Create())
 }
