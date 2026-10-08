@@ -1,0 +1,43 @@
+services:
+
+  db:
+    image: postgres:15
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: always
+
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    ports:
+      - "5442:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      # Mount current local directory to /app in container for Air watching
+      - .:/app
+      # Anonymous volume to prevent overwriting compiled tmp artifacts
+      - /app/tmp
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
