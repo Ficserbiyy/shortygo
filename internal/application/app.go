@@ -10,10 +10,13 @@ import (
 type App struct {
 	router *echo.Echo
 	db     *pgx.Conn
+	cfg    config
 }
 
-func NewApp(ctx context.Context) *App {
-	app := &App{}
+func NewApp(ctx context.Context, cfg config) *App {
+	app := &App{
+		cfg: cfg,
+	}
 
 	app.loadRoutes()
 	app.connectToDatabase(ctx)

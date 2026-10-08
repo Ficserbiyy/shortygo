@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -17,7 +16,7 @@ func (a *App) createTables(ctx context.Context) error {
             id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             url VARCHAR(100) NOT NULL,
 			shortcode VARCHAR(30) NOT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
     `)
@@ -29,7 +28,7 @@ func (a *App) createTables(ctx context.Context) error {
 }
 
 func (a *App) connectToDatabase(ctx context.Context) {
-	conn, err := pgx.Connect(ctx, os.Getenv("DATABASE_URL"))
+	conn, err := pgx.Connect(ctx, a.cfg.databaseURL)
 	if err != nil {
 		log.Fatalf("unable to connect to database: %v", err)
 	}

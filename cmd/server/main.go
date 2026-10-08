@@ -9,7 +9,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	app := application.NewApp(ctx)
+	app := application.NewApp(ctx, application.LoadConfig())
 
 	app.Start(ctx)
 }
