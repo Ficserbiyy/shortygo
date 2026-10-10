@@ -18,7 +18,7 @@ func (a *App) loadRoutes() {
 		return c.NoContent(http.StatusOK)
 	})
 
-	a.loadShortyRoutes(e.Group("/shorten"))
+	a.loadShortyRoutes(e.Group(""))
 
 	a.router = e
 }
@@ -28,5 +28,7 @@ func (a *App) loadShortyRoutes(e *echo.Group) {
 		DB: a.db,
 	}
 
-	e.POST("/", repo.Create())
+	e.POST("/shorten", repo.Create())
+
+	e.GET("/:shortcode", repo.RedirectToURL())
 }
