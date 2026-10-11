@@ -9,6 +9,6 @@ const (
 			created_at,
 			updated_at
 		FROM links
-		WHERE id = $1;
+		WHERE shortcode = $1;
 	`
 )

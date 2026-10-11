@@ -18,8 +18,8 @@ func NewApp(ctx context.Context, cfg config) *App {
 		cfg: cfg,
 	}
 
-	app.loadRoutes()
 	app.connectToDatabase(ctx)
+	app.loadRoutes()
 
 	return app
 }

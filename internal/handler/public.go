@@ -28,7 +28,7 @@ func (r *ShortyRepo) RedirectToURL() echo.HandlerFunc {
 		dbURL, err := storage.GetURLByShortcode(ctx, r.DB, shortcode)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				return echo.NewHTTPError(http.StatusNotFound, "404 page not found")
+				return echo.NewHTTPError(http.StatusNotFound, "404 URL not found")
 			}
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
