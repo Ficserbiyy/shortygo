@@ -13,6 +13,10 @@ type ShortyRepo struct {
 	DB *pgx.Conn
 }
 
+var (
+	errNotFound = echo.NewHTTPError(http.StatusNotFound, "404 URL not found")
+)
+
 // Create method creates a new short URL.
 func (r *ShortyRepo) Create() echo.HandlerFunc {
 	return func(c *echo.Context) error {
@@ -20,15 +24,16 @@ func (r *ShortyRepo) Create() echo.HandlerFunc {
 	}
 }
 
+// RedirectToURL method redirects to original URL.
 func (r *ShortyRepo) RedirectToURL() echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		ctx := c.Request().Context()
 		shortcode := c.Param("shortcode")
 
-		dbURL, err := storage.GetURLByShortcode(ctx, r.DB, shortcode)
+		dbURL, err := storage.GetByShortcode(ctx, r.DB, shortcode)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
-				return echo.NewHTTPError(http.StatusNotFound, "404 URL not found")
+				return errNotFound
 			}
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
