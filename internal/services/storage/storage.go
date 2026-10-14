@@ -49,9 +49,15 @@ func GetByShortcode(ctx context.Context, db *pgx.Conn, shortcode string) (model.
 }
 
 func Create(ctx context.Context, db *pgx.Conn, data model.URL) (string, error) {
-	var id int
+	tx, err := db.Begin(ctx)
+	if err != nil {
+		return "", fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback(ctx)
 
-	err := db.QueryRow(
+	var id uint64
+
+	err = tx.QueryRow(
 		ctx,
 		createQuery,
 		data.URL,
@@ -61,10 +67,14 @@ func Create(ctx context.Context, db *pgx.Conn, data model.URL) (string, error) {
 		return "", fmt.Errorf("URL creation failed: %w", err)
 	}
 
-	shortcode := encodeBase62(id)
+	shortcode := encodeBase62(int(id))
 	_, err = db.Exec(ctx, updateShortcodeQuery, shortcode, id)
 
-	return shortcode, err
+	if err != nil {
+		return shortcode, fmt.Errorf("URL updation failed: %w", err)
+	}
+
+	return shortcode, tx.Commit(ctx)
 }
 
 func DeleteByShortcode(ctx context.Context, db *pgx.Conn, shortcode string) error {
