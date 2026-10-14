@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/Ficserbiyy/shortygo/internal/model"
 	"github.com/Ficserbiyy/shortygo/internal/services/storage"
 	"github.com/jackc/pgx/v5"
 	"github.com/labstack/echo/v5"
@@ -18,19 +19,37 @@ var (
 )
 
 // Create method creates a new short URL.
-func (r *ShortyRepo) Create() echo.HandlerFunc {
+func (s *ShortyRepo) Create() echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		return c.NoContent(http.StatusNotImplemented)
+		r := c.Request()
+
+		// Parse form data
+		err := r.ParseForm()
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
+		url := model.URL{
+			URL: r.FormValue("link"),
+		}
+		ctx := r.Context()
+
+		shortcode, err := storage.Create(ctx, s.DB, url)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusCreated, map[string]string{"shortcode": shortcode})
 	}
 }
 
 // RedirectToURL method redirects to original URL.
-func (r *ShortyRepo) RedirectToURL() echo.HandlerFunc {
+func (s *ShortyRepo) RedirectToURL() echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		ctx := c.Request().Context()
 		shortcode := c.Param("shortcode")
 
-		dbURL, err := storage.GetByShortcode(ctx, r.DB, shortcode)
+		dbURL, err := storage.GetByShortcode(ctx, s.DB, shortcode)
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				return errNotFound

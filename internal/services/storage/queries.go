@@ -13,8 +13,8 @@ const (
 	`
 
 	createQuery = `
-		INSERT INTO expenses (url, shortcode)
-        VALUES ($1, $2)
+		INSERT INTO links (url)
+        VALUES ($1)
         RETURNING id
 	`
 

@@ -1,3 +1,4 @@
+// Package storage defines the application storage.
 package storage
 
 import (
@@ -54,7 +55,6 @@ func Create(ctx context.Context, db *pgx.Conn, data model.URL) (string, error) {
 		ctx,
 		createQuery,
 		data.URL,
-		data.ShortCode,
 	).Scan(&id)
 
 	if err != nil {
