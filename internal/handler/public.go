@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -17,6 +18,32 @@ type ShortyRepo struct {
 var (
 	errNotFound = echo.NewHTTPError(http.StatusNotFound, "404 URL not found")
 )
+
+func (s *ShortyRepo) getURLor404(ctx context.Context, shortcode string) (model.URL, error) {
+	url, err := storage.GetByShortcode(ctx, s.DB, shortcode)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return model.URL{}, errNotFound
+		}
+		return model.URL{}, echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return url, err
+}
+
+func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
+	return func(c *echo.Context) error {
+		ctx := c.Request().Context()
+		shortcode := c.Param("shortcode")
+
+		dbURL, err := s.getURLor404(ctx, shortcode)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, dbURL)
+	}
+}
 
 // Create method creates a new short URL.
 func (s *ShortyRepo) Create() echo.HandlerFunc {
@@ -49,12 +76,9 @@ func (s *ShortyRepo) RedirectToURL() echo.HandlerFunc {
 		ctx := c.Request().Context()
 		shortcode := c.Param("shortcode")
 
-		dbURL, err := storage.GetByShortcode(ctx, s.DB, shortcode)
+		dbURL, err := s.getURLor404(ctx, shortcode)
 		if err != nil {
-			if errors.Is(err, pgx.ErrNoRows) {
-				return errNotFound
-			}
-			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+			return err
 		}
 
 		return c.Redirect(http.StatusFound, dbURL.URL)

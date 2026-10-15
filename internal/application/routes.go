@@ -31,5 +31,6 @@ func (a *App) loadShortyRoutes(e *echo.Echo) {
 
 	e.GET("/url/:shortcode", repo.RedirectToURL())
 
+	g.Any("/:shortcode", repo.LinkPage())
 	g.POST("/", repo.Create())
 }
