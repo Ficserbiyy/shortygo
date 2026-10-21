@@ -33,15 +33,50 @@ func (s *ShortyRepo) getURLor404(ctx context.Context, shortcode string) (model.U
 
 func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 	return func(c *echo.Context) error {
-		ctx := c.Request().Context()
+		r := c.Request()
+
+		var hiddenMethod string
 		shortcode := c.Param("shortcode")
 
+		// This allows only GET, DELETE and PATCH requests.
+		if r.Method == http.MethodPost {
+			// Parse form data to read hidden fields
+			if err := r.ParseForm(); err != nil {
+				return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			}
+
+			hiddenMethod = r.FormValue("_method")
+			if hiddenMethod != http.MethodDelete && hiddenMethod != http.MethodPatch {
+				return echo.NewHTTPError(http.StatusMethodNotAllowed, "Method not allowed")
+			}
+
+			if hiddenMethod == http.MethodPatch {
+				if r.FormValue("url") == "" {
+					return c.NoContent(http.StatusNoContent)
+				}
+			}
+		}
+
+		ctx := r.Context()
 		dbURL, err := s.getURLor404(ctx, shortcode)
 		if err != nil {
 			return err
 		}
 
-		return c.JSON(http.StatusOK, dbURL)
+		if r.Method == http.MethodGet {
+			return c.JSON(http.StatusOK, dbURL)
+		}
+
+		if hiddenMethod == http.MethodPatch {
+			return c.NoContent(http.StatusNotImplemented)
+		}
+
+		if err := storage.DeleteByShortcode(ctx, s.DB, shortcode); err != nil {
+			return err
+		}
+
+		return c.NoContent(http.StatusNoContent)
+
 	}
 }
 
