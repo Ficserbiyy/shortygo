@@ -19,3 +19,14 @@ type URLResponse struct {
 	UpdatedAt   string `json:"updated_at,omitempty"`
 	AccessCount uint   `json:"access_count,omitempty"`
 }
+
+func (p URL) ResponseModel() URLResponse {
+	return URLResponse{
+		ID:          p.ID,
+		URL:         p.URL,
+		ShortCode:   p.ShortCode,
+		CreatedAt:   p.CreatedAt.Format("January 2, 2006"),
+		UpdatedAt:   p.UpdatedAt.Format("January 2, 2006"),
+		AccessCount: p.AccessCount,
+	}
+}

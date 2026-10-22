@@ -27,10 +27,12 @@ func (a *App) loadShortyRoutes(e *echo.Echo) {
 	repo := handler.ShortyRepo{
 		DB: a.db,
 	}
-	g := e.Group("/shorten")
+
+	e.Any("/", handler.IndexPage)
+	e.GET("/new", handler.NewPage)
 
 	e.GET("/url/:shortcode", repo.RedirectToURL())
 
-	g.Any("/:shortcode", repo.LinkPage())
-	g.POST("/", repo.Create())
+	e.POST("/shorten", repo.Create())
+	e.Any("/shorten/:shortcode", repo.LinkPage())
 }

@@ -31,6 +31,14 @@ func (s *ShortyRepo) getURLor404(ctx context.Context, shortcode string) (model.U
 	return url, err
 }
 
+func IndexPage(c *echo.Context) error {
+	return renderTemplate(c.Response(), "index", nil)
+}
+
+func NewPage(c *echo.Context) error {
+	return renderTemplate(c.Response(), "new", nil)
+}
+
 func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		r := c.Request()
@@ -71,8 +79,10 @@ func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 			return c.NoContent(http.StatusNotImplemented)
 		}
 
-		if err := storage.DeleteByShortcode(ctx, s.DB, shortcode); err != nil {
-			return err
+		if hiddenMethod == http.MethodDelete {
+			if err := storage.DeleteByShortcode(ctx, s.DB, shortcode); err != nil {
+				return err
+			}
 		}
 
 		return c.NoContent(http.StatusNoContent)
