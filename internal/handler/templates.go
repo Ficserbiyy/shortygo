@@ -10,7 +10,7 @@ import (
 var (
 	templates = template.Must(template.ParseFiles(
 		"index.html",
-		"templates/shorten.html",
+		"templates/created.html",
 		"templates/new.html",
 		"templates/link.html",
 		"templates/edit.html",

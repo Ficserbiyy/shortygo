@@ -111,7 +111,9 @@ func (s *ShortyRepo) Create() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusCreated, map[string]string{"shortcode": shortcode})
+		url.ShortCode = shortcode
+
+		return renderTemplate(c.Response(), "created", url)
 	}
 }
 
