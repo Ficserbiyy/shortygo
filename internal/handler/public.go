@@ -19,6 +19,8 @@ var (
 	errNotFound = echo.NewHTTPError(http.StatusNotFound, "404 URL not found")
 )
 
+// A helper function that returns URL record
+// from the database if found, else 404.
 func (s *ShortyRepo) getURLor404(ctx context.Context, shortcode string) (model.URL, error) {
 	url, err := storage.GetByShortcode(ctx, s.DB, shortcode)
 	if err != nil {
@@ -72,7 +74,7 @@ func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 		}
 
 		if r.Method == http.MethodGet {
-			return c.JSON(http.StatusOK, dbURL)
+			return renderTemplate(c.Response(), "link", dbURL)
 		}
 
 		if hiddenMethod == http.MethodPatch {
