@@ -41,6 +41,16 @@ func NewPage(c *echo.Context) error {
 	return renderTemplate(c.Response(), "new", nil)
 }
 
+func EditPage(c *echo.Context) error {
+	shortcode := c.Param("shortcode")
+
+	url := model.URL{
+		ShortCode: shortcode,
+	}
+
+	return renderTemplate(c.Response(), "edit", url)
+}
+
 func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 	return func(c *echo.Context) error {
 		r := c.Request()

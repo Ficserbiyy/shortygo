@@ -30,6 +30,7 @@ func (a *App) loadShortyRoutes(e *echo.Echo) {
 
 	e.Any("/", handler.IndexPage)
 	e.GET("/new", handler.NewPage)
+	e.POST("/edit/:shortcode", handler.EditPage)
 
 	e.GET("/url/:shortcode", repo.RedirectToURL())
 

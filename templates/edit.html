@@ -5,4 +5,21 @@
     <title>Update URL</title>
 </head>
 
+<body>
+    <h1>Update short link</h1>
+
+    <form action="/shorten/{{.ShortCode}}" method="POST">
+        <div>
+            <label>New URL: </label>
+            <input type="text" name="link" placeholder="https://www.google.com/" required>
+        </div>
+
+        <hr>
+
+        <!-- Browsers only allow GET and POST in native HTML forms -->
+        <input type="hidden" name="_method" value="PATCH">
+        <button type="submit">Update</button>
+    </form>
+
+</body>
 </html>
