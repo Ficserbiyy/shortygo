@@ -70,10 +70,8 @@ func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 				return echo.NewHTTPError(http.StatusMethodNotAllowed, "Method not allowed")
 			}
 
-			if hiddenMethod == http.MethodPatch {
-				if r.FormValue("url") == "" {
-					return c.NoContent(http.StatusNoContent)
-				}
+			if hiddenMethod == http.MethodPatch && r.FormValue("link") == "" {
+				return c.NoContent(http.StatusNoContent)
 			}
 		}
 

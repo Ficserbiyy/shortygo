@@ -8,6 +8,18 @@
 <body>
     <h1>URL {{.ShortCode}}</h1>
 
+    <br>
+    <form action="/edit/{{.ShortCode}}" method="POST">
+        <button type="submit">Update Short URL</button>
+    </form>
+
+    <br>
+    <form action="/shorten/{{.ShortCode}}" method="POST">
+        <!-- Browsers only allow GET and POST in native HTML forms -->
+        <input type="hidden" name="_method" value="DELETE">
+        <button type="submit">Delete Short URL</button>
+    </form>
+
     <hr>
     <details>
         <summary>Link info</summary>
