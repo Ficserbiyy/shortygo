@@ -30,7 +30,7 @@ func (s *ShortyRepo) getURLor404(ctx context.Context, shortcode string) (model.U
 		return model.URL{}, echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return url, err
+	return url, nil
 }
 
 func IndexPage(c *echo.Context) error {
@@ -82,7 +82,7 @@ func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 		}
 
 		if r.Method == http.MethodGet {
-			return renderTemplate(c.Response(), "link", dbURL)
+			return renderTemplate(c.Response(), "link", dbURL.ResponseModel())
 		}
 
 		if hiddenMethod == http.MethodPatch {

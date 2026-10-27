@@ -15,7 +15,7 @@ func (a *App) createTables(ctx context.Context) error {
         CREATE TABLE IF NOT EXISTS links (
             id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
             url VARCHAR(100) NOT NULL,
-			shortcode VARCHAR(30),
+			shortcode VARCHAR(100),
             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         )
