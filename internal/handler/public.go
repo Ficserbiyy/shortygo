@@ -86,7 +86,12 @@ func (s *ShortyRepo) LinkPage() echo.HandlerFunc {
 		}
 
 		if hiddenMethod == http.MethodPatch {
-			return c.NoContent(http.StatusNotImplemented)
+			link := r.FormValue("link")
+
+			if err := storage.UpdateByShortcode(ctx, s.DB, shortcode, link); err != nil {
+				return err
+			}
+			return c.NoContent(http.StatusNoContent)
 		}
 
 		if hiddenMethod == http.MethodDelete {

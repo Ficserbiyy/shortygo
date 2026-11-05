@@ -77,6 +77,15 @@ func Create(ctx context.Context, db *pgx.Conn, data model.URL) (string, error) {
 	return shortcode, tx.Commit(ctx)
 }
 
+func UpdateByShortcode(ctx context.Context, db *pgx.Conn, shortcode, newURL string) error {
+	_, err := db.Exec(ctx, updateByShortcodeQuery, newURL, shortcode)
+	if err != nil {
+		return fmt.Errorf("failed to update URL %s: %w", shortcode, err)
+	}
+
+	return nil
+}
+
 func DeleteByShortcode(ctx context.Context, db *pgx.Conn, shortcode string) error {
 	_, err := db.Exec(ctx, deleteByShortcodeQuery, shortcode)
 	if err != nil {

@@ -24,6 +24,12 @@ const (
 		WHERE id = $2
 	`
 
+	updateByShortcodeQuery = `
+		UPDATE links
+		SET url = $1
+		WHERE shortcode = $2
+	`
+
 	deleteByShortcodeQuery = `
 		DELETE FROM links
 		WHERE shortcode = $1
